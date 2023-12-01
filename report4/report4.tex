@@ -1,0 +1,63 @@
+\documentclass{ltjsarticle}
+
+\usepackage{graphicx}
+\usepackage{physics}
+\usepackage{here}
+
+
+
+\begin{document}
+
+\Huge
+    \begin{center}
+    数値計算法第五回授業レポート
+
+    04B21024
+    葛堀和也
+    \end{center}
+\clearpage
+
+\normalsize
+
+\section{問１}
+$\Delta t$の満たす必要のある条件として、以下がわかっている。
+
+\begin{align}
+    \Delta t < \frac{\pi - u_{n}}{\gamma (\sin(u_{n}))^{1.2}}
+    \label{eq:base}
+\end{align}
+$u_{n}$は自然数であるので、全ての自然数に対してこの条件を満たすような$\Delta t$を選べば良い。
+したがって、次の関数の最小値を求める必要がある。
+
+\begin{align}
+    Up(u) = \frac{\pi - u}{\gamma (\sin(u))^{1.2}}
+    \label{eq:cfunc}
+\end{align}
+
+
+この関数について考察する。まず、この関数は原点で正の無限大に発散することがわかる。
+というのも、$\sin(u)$が$u \rightarrow 0$で０になるからである。
+全く同様の理由で、そこから$\sin$の半周期分だけずれた点$u=\pi$でもこの関数は正の無限大に発散するとわかる。
+というのも、
+\begin{align}
+    Up(u) &= \frac{\pi - u}{\gamma (\sin(u))^{1.2}}
+          &= \frac{\pi - u}{\gamma \sin(u)}  \times \frac{1}{(\sin(u))^{0.2}}
+          &= \frac{\pi - u}{\gamma \sin(\pi -u)} \times \frac{1}{\sin(u)^{0.2}}
+\end{align}
+これより、前半部分は$u \rightarrow \pi$の極限をとると１になるが、一方で後半部分はそのまま正の無限大に発散する。
+
+関数\ref{eq:cfunc}には他に極地はなく、しかもこの範囲、すなわち$0<u<\pi$の範囲で連続かつ微分可能であるので、
+この範囲における極小値が、この範囲における最小値となる。
+
+\subsection{手計算}
+最初に手でやってみる。
+\begin{align}
+    \frac{d}{du}Uq = 
+\end{align}
+
+
+
+
+
+
+\end{document}
