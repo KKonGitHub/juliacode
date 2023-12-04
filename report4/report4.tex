@@ -2,6 +2,7 @@
 
 \usepackage{graphicx}
 \usepackage{physics}
+\usepackage{amsmath}
 \usepackage{here}
 
 
@@ -10,50 +11,116 @@
 
 \Huge
     \begin{center}
-    数値計算法第五回授業レポート
+        数値計算法第四回授業レポート
 
-    04B21024
-    葛堀和也
+        04B21024
+        葛堀和也
     \end{center}
 \clearpage
 
 \normalsize
 
 \section{問１}
-$\Delta t$の満たす必要のある条件として、以下がわかっている。
-
+次の方程式をNLsolveを使った方法と、二分法の両方で解く問題であった。
 \begin{align}
-    \Delta t < \frac{\pi - u_{n}}{\gamma (\sin(u_{n}))^{1.2}}
-    \label{eq:base}
-\end{align}
-$u_{n}$は自然数であるので、全ての自然数に対してこの条件を満たすような$\Delta t$を選べば良い。
-したがって、次の関数の最小値を求める必要がある。
-
-\begin{align}
-    Up(u) = \frac{\pi - u}{\gamma (\sin(u))^{1.2}}
-    \label{eq:cfunc}
+    \sin(x) = \frac{3}{4}
 \end{align}
 
+まず二分法によって近似解を得た。以下の表は二分法による解法の初期値や試行回数上限などの値である。
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c|cc}
+        \hline \hline 
+        試行回数上限 & MAX & 100\\
+        許容誤差 & err & 1e-8\\
+        初期値上限 & top & \text($\frac{\pi}{2}$)\\
+        初期値下限 & bottom & 0\\
+        \hline \hline        
+    \end{tabular}
+\end{table}
 
-この関数について考察する。まず、この関数は原点で正の無限大に発散することがわかる。
-というのも、$\sin(u)$が$u \rightarrow 0$で０になるからである。
-全く同様の理由で、そこから$\sin$の半周期分だけずれた点$u=\pi$でもこの関数は正の無限大に発散するとわかる。
-というのも、
+それによる結果は次のようであった。
+\begin{center}
+近似解：0.8480620808468514
+\end{center}
+また、この近似解に至るまでのステップ数は27回であった。
+
+次に、NLsolveを用いた解法によって近似解を求めた。初期値は1.0とした。
+この時、近似解は収束して、
+\begin{center}
+    近似解：0.848062078981481
+\end{center}
+となった。
+この２つを比較すると、９桁まで一致していることがわかる。
+二分法においては誤差を８桁以下としていたので、これとほぼ一致する。
+したがって、８桁まで信頼できる解である。
+
+
+\section{問２}
+
+次の非線形方程式を解く。
 \begin{align}
-    Up(u) &= \frac{\pi - u}{\gamma (\sin(u))^{1.2}}
-          &= \frac{\pi - u}{\gamma \sin(u)}  \times \frac{1}{(\sin(u))^{0.2}}
-          &= \frac{\pi - u}{\gamma \sin(\pi -u)} \times \frac{1}{\sin(u)^{0.2}}
+    \begin{bmatrix}
+        x + 2y + z\\
+        x^{2} + y^{2} + z^{2}\\
+        \sin(x+y+z)
+    \end{bmatrix}
+    = 
+    \begin{bmatrix}
+        -1\\
+        10\\
+        0.7\\
+    \end{bmatrix}
 \end{align}
-これより、前半部分は$u \rightarrow \pi$の極限をとると１になるが、一方で後半部分はそのまま正の無限大に発散する。
 
-関数\ref{eq:cfunc}には他に極地はなく、しかもこの範囲、すなわち$0<u<\pi$の範囲で連続かつ微分可能であるので、
-この範囲における極小値が、この範囲における最小値となる。
-
-\subsection{手計算}
-最初に手でやってみる。
+この式を変形して、次のようにする。
 \begin{align}
-    \frac{d}{du}Uq = 
+    F = 
+    \begin{bmatrix}
+        x+2y+z+1\\
+        x^{2} + 2y^{2} + z^{2} -10\\
+        \sin(x+y+z)-0.7
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        0\\
+        0\\
+        0
+    \end{bmatrix}
 \end{align}
+
+左辺を、その解を求めるべき関数$F$とみなす。このベクトル値関数のヤコビ行列は以下の通り。
+
+\begin{align}
+    \nabla F = 
+    \begin{bmatrix}
+        1 & 2 & 1 \\
+        2x & 4y & 2z \\
+        \cos(x+y+z) & \cos(x+y+z) & \cos(x+y+z)
+    \end{bmatrix}
+\end{align}
+さて、これらの式より、ニュートン法を用いてこの非線形方程式を近似的に解くことができる。
+
+初期値や指定した値は以下の通り。
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c|cc}
+        \hline \hline
+        試行回数上限 & MAX & 100\\
+        誤差上限 & err & 1e-7\\
+        初期値 & temp & [1.0 ,0.0 ,0.0]\\
+        \hline \hline
+    \end{tabular}
+\end{table}
+
+これによる近似解は以下のようであった。
+\begin{center}
+    近似解:[1.7458493588323, -1.775397496610753, 0.804945634389206]
+\end{center}
+ただし、左から順に、x,y,z成分の解を表す。
+
+次に、これをNLsolveパッケージの関数を用いて近似的に解くことを考える。
+%まだできてない。例のエラーが出る。
 
 
 
